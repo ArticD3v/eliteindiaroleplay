@@ -104,6 +104,13 @@ router.post('/staff-apply', ensureAuth, applyLimiter, async (req, res) => {
     res.json({ success: true, message: 'Staff application submitted successfully!' });
 });
 
+/**
+ * GET /apply/gang-apply
+ */
+router.get('/gang-apply', ensureAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, '../../public/gang-apply.html'));
+});
+
 router.post('/gang-apply', ensureAuth, applyLimiter, async (req, res) => {
     const { gangName, gangType, story, memberCount } = req.body;
     const discordId = req.user.discordId;
