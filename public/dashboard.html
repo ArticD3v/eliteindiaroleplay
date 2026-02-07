@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Elite India Roleplay</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-top: 4rem;
+            min-height: 60vh;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Profile Section */
+        .profile-card {
+            background: linear-gradient(145deg, rgba(20, 20, 30, 0.6) 0%, rgba(10, 10, 15, 0.8) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-vibrant));
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--accent-primary);
+            box-shadow: 0 0 20px var(--accent-glow);
+            object-fit: cover;
+        }
+
+        .user-tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-glass);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Status Hero */
+        .status-hero {
+            background: radial-gradient(circle at top right, rgba(168, 0, 255, 0.1), transparent 60%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-hero-content {
+            z-index: 1;
+            flex: 1;
+        }
+
+        .status-icon-large {
+            font-size: 5rem;
+            margin-left: 2rem;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 30px var(--accent-glow));
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        /* Action Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            transition: var(--transition-fast);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-vibrant);
+            box-shadow: 0 10px 30px -5px rgba(0, 243, 255, 0.15);
+        }
+
+        .action-card::after {
+            content: '→';
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            transition: var(--transition-fast);
+        }
+
+        .action-card:hover::after {
+            color: var(--accent-vibrant);
+            transform: translateX(5px);
+        }
+
+        .action-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .action-title {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">ELITE <span style="color: var(--accent-primary);">INDIA</span></a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <a href="/admin.html" id="admin-link" class="btn btn-secondary hidden"
+                    style="padding: 0.5rem 1.2rem; font-size: 0.8rem;">ADMIN PANEL</a>
+                <a href="/auth/logout" class="btn btn-secondary"
+                    style="padding: 0.5rem 1.2rem; font-size: 0.8rem;">LOGOUT</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="full-screen">
+        <main class="container">
+
+            <div class="dashboard-container animate-fade-up">
+
+                <!-- Left Sidebar: Profile -->
+                <aside class="profile-card">
+                    <div class="avatar-container">
+                        <img id="user-avatar" class="avatar" src="" alt="Avatar">
+                    </div>
+                    <h2 id="user-name" style="margin-bottom: 0.5rem;">Loading...</h2>
+                    <p id="user-id" style="color: var(--text-dim); font-family: var(--font-body);">ID: ---</p>
+
+                    <div class="user-tag">CITIZEN</div>
+
+                    <div
+                        style="margin-top: 2rem; text-align: left; padding-top: 2rem; border-top: 1px solid var(--border-glass);">
+                        <h4 style="color: var(--text-muted); margin-bottom: 1rem; font-size: 0.9rem;">ACCOUNT STATUS
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                <span style="color: var(--text-dim);">Joined</span>
+                                <span style="color: var(--text-main);">Today</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                <span style="color: var(--text-dim);">Quiz Attempts</span>
+                                <span style="color: var(--accent-vibrant);">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right Content -->
+                <div class="main-content">
+
+                    <!-- Status Hero Card -->
+                    <div class="status-hero" id="status-card">
+                        <div class="status-hero-content">
+                            <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Checking Status...</h2>
+                            <p class="text-muted">Please wait while we fetch your data.</p>
+                        </div>
+                        <div class="loader"></div>
+                    </div>
+
+                    <!-- Quick Actions Grid -->
+                    <div>
+                        <h3
+                            style="margin-bottom: 1.5rem; font-size: 1.3rem; border-left: 4px solid var(--accent-primary); padding-left: 1rem;">
+                            APPLICATIONS</h3>
+                        <div class="action-grid">
+                            <a href="/staff-apply" class="action-card">
+                                <span class="action-icon">👔</span>
+                                <div class="action-title">Staff Application</div>
+                                <div class="action-desc">Join the team and help manage the city.</div>
+                            </a>
+                            <a href="/gang-apply" class="action-card">
+                                <span class="action-icon">🔫</span>
+                                <div class="action-title">Gang Registration</div>
+                                <div class="action-desc">Register your organization and claim turf.</div>
+                            </a>
+                            <a href="https://discord.gg/eliteindiarp" target="_blank" class="action-card">
+                                <span class="action-icon">💬</span>
+                                <div class="action-title">Join Discord</div>
+                                <div class="action-desc">Connect with the community and support.</div>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        let cooldownInterval = null;
+
+        async function initDashboard() {
+            const data = await checkAuth();
+            if (!data) return;
+
+            const { user, cooldown, latestAttempt, isAdmin } = data;
+
+            // Set user info
+            document.getElementById('user-avatar').src = user.avatar;
+            document.getElementById('user-name').textContent = user.username;
+            document.getElementById('user-id').textContent = `ID: ${user.discordId}`;
+
+            // Show admin link
+            if (isAdmin) {
+                document.getElementById('admin-link').classList.remove('hidden');
+                document.querySelector('.user-tag').textContent = 'ADMINISTRATOR';
+                document.querySelector('.user-tag').style.borderColor = 'var(--accent-primary)';
+                document.querySelector('.user-tag').style.color = 'var(--accent-primary)';
+            }
+
+            // Render status
+            renderStatus(user.status, cooldown, latestAttempt);
+        }
+
+        function renderStatus(status, cooldown, latestAttempt) {
+            const statusCard = document.getElementById('status-card');
+
+            if (status === 'passed') {
+                statusCard.style.borderColor = 'var(--success)';
+                statusCard.innerHTML = `
+                    <div class="status-hero-content">
+                        <h2 style="color: var(--success); text-shadow: 0 0 20px rgba(0,255,157,0.3);">PASSED & ALLOWLISTED</h2>
+                        <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem;">Congratulations! You are officially a citizen of Elite India.</p>
+                        ${latestAttempt ? `<div class="badge badge-success">Score: ${latestAttempt.score}/10</div>` : ''}
+                        <div style="margin-top: 1.5rem;">
+                            <a href="/result.html" class="btn btn-primary">VIEW RESULT</a>
+                        </div>
+                    </div>
+                    <div class="status-icon-large" style="color: var(--success);">✓</div>
+                `;
+            } else if (status === 'failed' && cooldown.inCooldown) {
+                statusCard.style.borderColor = 'var(--error)';
+                statusCard.innerHTML = `
+                    <div class="status-hero-content">
+                        <h2 style="color: var(--error); text-shadow: 0 0 20px rgba(255, 42, 77, 0.3);">APPLICATION DENIED</h2>
+                        <p style="color: var(--text-muted); margin: 0.5rem 0;">You did not meet the requirements. You can retry after the cooldown.</p>
+                        
+                        <div style="background: rgba(0,0,0,0.4); padding: 1rem; border-radius: 8px; margin-top: 1.5rem; display: inline-block; border: 1px solid var(--border-glass);">
+                            <p style="font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-dim); margin-bottom: 0.5rem;">COOLDOWN TIMER</p>
+                            <div id="cooldown-timer" style="font-family: var(--font-head); font-size: 2rem; color: var(--text-main); font-weight: 700;">
+                                ${Utils.formatTime(cooldown.remainingTime)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="status-icon-large" style="color: var(--error);">✕</div>
+                `;
+                startCooldownTimer(cooldown.remainingTime);
+            } else if (status === 'failed' && !cooldown.inCooldown) {
+                statusCard.style.borderColor = 'var(--accent-vibrant)';
+                statusCard.innerHTML = `
+                    <div class="status-hero-content">
+                        <h2 style="color: var(--accent-vibrant);">READY TO RETRY</h2>
+                        <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem;">Your cooldown has ended. Good luck on your next attempt!</p>
+                        <a href="/quiz.html" class="btn btn-primary">START QUIZ</a>
+                    </div>
+                    <div class="status-icon-large" style="color: var(--accent-vibrant);">↻</div>
+                `;
+            } else {
+                statusCard.innerHTML = `
+                    <div class="status-hero-content">
+                        <h2 style="color: var(--text-main);">NOT ATTEMPTED</h2>
+                        <p style="color: var(--text-muted); margin: 0.5rem 0 1.5rem;">Complete the allowlist quiz to join the server. Read the rules carefully.</p>
+                        <a href="/quiz.html" class="btn btn-primary">START QUIZ</a>
+                    </div>
+                    <div class="status-icon-large" style="color: var(--text-muted);">?</div>
+                `;
+            }
+        }
+
+        function startCooldownTimer(remainingMs) {
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            let remaining = remainingMs;
+            const timerEl = document.getElementById('cooldown-timer');
+
+            cooldownInterval = setInterval(() => {
+                remaining -= 1000;
+                if (remaining <= 0) {
+                    clearInterval(cooldownInterval);
+                    window.location.reload();
+                    return;
+                }
+                if (timerEl) timerEl.textContent = Utils.formatTime(remaining);
+            }, 1000);
+        }
+
+        initDashboard();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+{
+  "users": {
+    "1245371933596586047": {
+      "discordId": "1245371933596586047",
+      "username": "articd3v",
+      "avatar": "https://cdn.discordapp.com/avatars/1245371933596586047/a_ed68556dcb44ece663754f3fdd9bde2d.png?size=128",
+      "status": "passed",
+      "lastAttempt": "2026-02-07T14:05:38.215Z"
+    },
+    "1303387997856727135": {
+      "discordId": "1303387997856727135",
+      "username": "notyourahul",
+      "avatar": "https://cdn.discordapp.com/avatars/1303387997856727135/b99ffe7c06ab75c8f391c2581dcf50d9.png?size=128",
+      "status": "new",
+      "lastAttempt": "2026-02-07T14:05:22.413Z"
+    },
+    "818853878015328276": {
+      "discordId": "818853878015328276",
+      "username": "arborlydarker",
+      "avatar": "https://cdn.discordapp.com/avatars/818853878015328276/201eb4ab7070e6251c065c3990341d2d.png?size=128",
+      "status": "new",
+      "lastAttempt": null
+    },
+    "1467209421225721967": {
+      "discordId": "1467209421225721967",
+      "username": "superman6969.exe",
+      "avatar": "https://cdn.discordapp.com/embed/avatars/1.png",
+      "status": "new",
+      "lastAttempt": null
+    },
+    "707681695855542344": {
+      "discordId": "707681695855542344",
+      "username": "odinson7979",
+      "avatar": "https://cdn.discordapp.com/avatars/707681695855542344/552cb5406a546f95b2f2bb3108b75de8.png?size=128",
+      "status": "new",
+      "lastAttempt": null
+    }
+  }
+}

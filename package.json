@@ -1,0 +1,29 @@
+{
+  "name": "elite-india-roleplay",
+  "version": "1.0.0",
+  "description": "Discord-authenticated allowlist quiz with role assignment bot for Elite India Roleplay FiveM server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "fivem",
+    "discord",
+    "quiz",
+    "allowlist",
+    "bot"
+  ],
+  "author": "Elite India Roleplay",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "helmet": "^7.1.0",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4"
+  }
+}

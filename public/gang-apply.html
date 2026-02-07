@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gang Registration | Elite India Roleplay</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .page-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+        }
+
+        .form-card {
+            background: rgba(20, 10, 10, 0.9);
+            border: 1px solid rgba(255, 42, 77, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--error), #ff6b6b);
+        }
+
+        .form-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ff6b6b;
+            text-shadow: 0 0 20px rgba(255, 42, 77, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        input,
+        textarea,
+        select {
+            background: rgba(10, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            width: 100%;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(20, 0, 0, 0.5);
+            border-color: var(--error);
+            box-shadow: 0 0 20px rgba(255, 42, 77, 0.15);
+            outline: none;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .warning-box {
+            background: rgba(255, 42, 77, 0.05);
+            border-left: 3px solid var(--error);
+            padding: 1rem;
+            margin-bottom: 2.5rem;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        option {
+            background: #111;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard.html" class="nav-brand" style="font-size: 1rem;">
+                <span style="color: var(--text-muted);">← BACK TO DASHBOARD</span>
+            </a>
+            <div style="font-family: var(--font-head); letter-spacing: 0.1em; color: var(--error);">
+                ORGANIZATION REGISTRY
+            </div>
+        </div>
+    </nav>
+
+    <div class="full-screen">
+        <div class="page-wrapper animate-fade-up">
+
+            <div class="form-card">
+                <div class="form-header">
+                    <h1>Gang Registration</h1>
+                    <p style="color: var(--text-muted);">Claim your territory. Establish your legacy.</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>NOTICE:</strong> Submitting this application will lock your organization name.
+                    Ensure you have verified your member count and story before proceeding. Only serious RP
+                    organizations will be approved.
+                </div>
+
+                <form id="gang-form">
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+                        <div class="form-group">
+                            <label for="gangName">Organization Name</label>
+                            <input type="text" id="gangName" name="gangName" required placeholder="e.g. The Lost MC">
+                        </div>
+                        <div class="form-group">
+                            <label for="memberCount">Est. Members</label>
+                            <input type="number" id="memberCount" name="memberCount" required min="3" max="50"
+                                placeholder="5">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gangType">Organization Type</label>
+                        <select id="gangType" name="gangType" required>
+                            <option value="" disabled selected>Select Type</option>
+                            <option value="street">Street Gang</option>
+                            <option value="mafia">Mafia / Syndicate</option>
+                            <option value="cartel">Cartel</option>
+                            <option value="mc">Motorcycle Club</option>
+                            <option value="security">Private Security / Mercenary</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story">Backstory & Operations</label>
+                        <textarea id="story" name="story" required rows="6"
+                            placeholder="Describe your organization's history, hierarchy, dress code, and illegal activities..."></textarea>
+                    </div>
+
+                    <div style="margin-top: 3rem;">
+                        <button type="submit" class="btn btn-primary w-full" id="submit-btn"
+                            style="width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #a00, #500); border-color: #a00;">
+                            REGISTER ORGANIZATION
+                        </button>
+                    </div>
+                </form>
+
+                <div id="message"
+                    style="display: none; padding: 1rem; border-radius: 4px; text-align: center; margin-top: 2rem;">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        const form = document.getElementById('gang-form');
+        const btn = document.getElementById('submit-btn');
+        const msg = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader-sm"></span> PROCESSING...';
+            msg.style.display = 'none';
+
+            const formData = {
+                gangName: form.gangName.value,
+                gangType: form.gangType.value,
+                story: form.story.value,
+                memberCount: form.memberCount.value
+            };
+
+            try {
+                const response = await fetch('/gang-apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.textContent = data.message;
+                    msg.style.background = 'rgba(0, 255, 157, 0.1)';
+                    msg.style.color = 'var(--success)';
+                    msg.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+            } catch (err) {
+                msg.textContent = err.message;
+                msg.style.background = 'rgba(255, 42, 77, 0.1)';
+                msg.style.color = 'var(--error)';
+                msg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'REGISTER ORGANIZATION';
+            }
+        });
+
+        (async () => {
+            try { await checkAuth(); } catch (err) { window.location.href = '/'; }
+        })();
+    </script>
+</body>
+
+</html>

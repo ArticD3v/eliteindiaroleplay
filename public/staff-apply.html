@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Application | Elite India Roleplay</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .page-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 1rem;
+        }
+
+        .form-card {
+            background: rgba(13, 13, 20, 0.85);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-vibrant));
+        }
+
+        .form-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        input,
+        textarea {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            width: 100%;
+            font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 20px rgba(168, 0, 255, 0.1);
+            outline: none;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .form-info {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard.html" class="nav-brand" style="font-size: 1rem;">
+                <span style="color: var(--text-muted);">← BACK TO DASHBOARD</span>
+            </a>
+            <div style="font-family: var(--font-head); letter-spacing: 0.1em; color: var(--text-dim);">
+                STAFF RECRUITMENT
+            </div>
+        </div>
+    </nav>
+
+    <div class="full-screen">
+        <div class="page-wrapper animate-fade-up">
+
+            <div class="form-card">
+                <div class="form-header">
+                    <h1>Staff Application</h1>
+                    <p style="color: var(--text-muted);">Join the team dedicated to maintaining elite roleplay
+                        standards.</p>
+                </div>
+
+                <form id="staff-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div class="form-group">
+                            <label for="age">Real Age</label>
+                            <input type="number" id="age" name="age" required min="13" max="100" placeholder="18">
+                        </div>
+                        <div class="form-group">
+                            <label for="availability">Weekly Availability</label>
+                            <input type="text" id="availability" name="availability" required
+                                placeholder="e.g. Mon-Fri 6PM-10PM">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Prior Experience</label>
+                        <input type="text" id="experience" name="experience" required
+                            placeholder="List servers, roles, and duration...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="whyStaff">Motivation</label>
+                        <textarea id="whyStaff" name="whyStaff" required rows="4"
+                            placeholder="Why do you want to join the staff team? What can you bring to the table?"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="scenario" style="color: var(--accent-primary);">Scenario: Rule Break</label>
+                        <p class="form-info" style="margin-bottom: 1rem;">
+                            You witness two players breaking 'No-RP' rules during a high-speed chase. They are arguing
+                            OOC in voice chat.
+                        </p>
+                        <textarea id="scenario" name="scenario" required rows="6"
+                            placeholder="Detail your exact step-by-step resolution process..."></textarea>
+                    </div>
+
+                    <div style="margin-top: 3rem;">
+                        <button type="submit" class="btn btn-primary w-full" id="submit-btn"
+                            style="width: 100%; padding: 1.2rem;">SUBMIT APPLICATION</button>
+                    </div>
+                </form>
+
+                <div id="message"
+                    style="display: none; padding: 1rem; border-radius: 4px; text-align: center; margin-top: 2rem;">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        const form = document.getElementById('staff-form');
+        const btn = document.getElementById('submit-btn');
+        const msg = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader-sm"></span> SENDING...';
+            msg.style.display = 'none';
+
+            const formData = {
+                age: form.age.value,
+                experience: form.experience.value,
+                whyStaff: form.whyStaff.value,
+                availability: form.availability.value,
+                scenario: form.scenario.value
+            };
+
+            try {
+                const response = await fetch('/staff-apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    msg.textContent = 'Application received successfully. Redirecting...';
+                    msg.style.background = 'rgba(0, 255, 157, 0.1)';
+                    msg.style.color = 'var(--success)';
+                    msg.style.display = 'block';
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = '/dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+            } catch (err) {
+                msg.textContent = err.message;
+                msg.style.background = 'rgba(255, 42, 77, 0.1)';
+                msg.style.color = 'var(--error)';
+                msg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'SUBMIT APPLICATION';
+            }
+        });
+
+        (async () => {
+            try { await checkAuth(); } catch (err) { window.location.href = '/'; }
+        })();
+    </script>
+</body>
+
+</html>

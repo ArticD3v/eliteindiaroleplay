@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz | Elite India Roleplay</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        /* Quiz Specific Overrides */
+        .quiz-container {
+            max-width: 900px;
+            margin: 4rem auto;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-card {
+            background: rgba(13, 13, 20, 0.8);
+            border: 1px solid var(--border-glass);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transition: height 0.3s ease;
+        }
+
+        /* Progress Bar */
+        .quiz-progress-track {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-vibrant));
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Typography */
+        .question-number {
+            font-family: var(--font-head);
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            border: 1px solid var(--border-glass);
+            padding: 1.2rem 1.5rem;
+            border-radius: var(--radius-md);
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2sease;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-primary);
+            color: var(--text-main);
+            transform: translateX(5px);
+        }
+
+        .option-btn.selected {
+            background: rgba(168, 0, 255, 0.15);
+            border-color: var(--accent-vibrant);
+            color: white;
+            box-shadow: 0 0 20px rgba(168, 0, 255, 0.2);
+        }
+
+        .option-key {
+            font-family: var(--font-head);
+            font-weight: 700;
+            margin-right: 1.5rem;
+            color: var(--text-muted);
+            border: 1px solid var(--border-glass);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .option-btn.selected .option-key {
+            background: var(--accent-vibrant);
+            color: black;
+            border-color: var(--accent-vibrant);
+        }
+
+        /* Nav */
+        .quiz-footer {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 0.5s ease 0.5s forwards;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .question-text {
+                font-size: 1.4rem;
+            }
+
+            .quiz-container {
+                padding: 1rem;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/dashboard.html" class="nav-brand" style="font-size: 1rem;">
+                <span style="color: var(--text-muted);">← EXIT QUIZ</span>
+            </a>
+            <div style="font-family: var(--font-head); letter-spacing: 0.1em; color: var(--text-dim);">
+                ELITE EXAM AUTHORITY
+            </div>
+        </div>
+    </nav>
+
+    <div class="full-screen">
+        <div class="quiz-container">
+
+            <div class="question-card animate-fade-up" id="question-card">
+                <!-- Progress Line -->
+                <div class="quiz-progress-track">
+                    <div class="quiz-progress-fill" id="progress-bar"></div>
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <span id="question-number" class="question-number">QUESTION 01 / 10</span>
+                    <h2 id="question-text" class="question-text">Loading secure assessment data...</h2>
+
+                    <div class="options-grid" id="options-list">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-footer">
+                <button class="btn btn-secondary" id="btn-prev" disabled>PREVIOUS</button>
+                <button class="btn btn-primary" id="btn-next">NEXT QUESTION →</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        const QUIZ_STATE_KEY = 'eirp_quiz_state';
+        let questions = [];
+        let currentIndex = 0;
+        let answers = [];
+        let isSubmitting = false;
+
+        async function initQuiz() {
+            const authData = await checkAuth();
+            if (!authData) return;
+
+            if (authData.user.status === 'passed') {
+                window.location.href = '/result.html';
+                return;
+            }
+
+            if (authData.cooldown.inCooldown) {
+                window.location.href = '/dashboard.html';
+                return;
+            }
+
+            // Load state
+            const savedState = Utils.getSession(QUIZ_STATE_KEY);
+
+            try {
+                const data = await API.getQuestions();
+
+                if (!data || !data.questions) {
+                    alert('Failed to load questions.');
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+
+                questions = data.questions;
+
+                if (savedState && savedState.answers && savedState.answers.length === questions.length) {
+                    answers = savedState.answers;
+                    currentIndex = savedState.currentIndex || 0;
+                } else {
+                    answers = new Array(questions.length).fill(null);
+                    currentIndex = 0;
+                }
+
+                renderQuestion();
+
+            } catch (err) {
+                console.error(err);
+                alert('Failed to load quiz. Please contact support.');
+                window.location.href = '/dashboard.html';
+            }
+        }
+
+        function renderQuestion() {
+            const question = questions[currentIndex];
+            const totalQuestions = questions.length;
+
+            // Update Progress
+            const progressPercent = ((currentIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('question-number').textContent = `QUESTION ${String(currentIndex + 1).padStart(2, '0')} / ${totalQuestions}`;
+            document.getElementById('question-text').textContent = question.question;
+
+            // Render Options
+            const optionsContainer = document.getElementById('options-list');
+            const letters = ['A', 'B', 'C', 'D'];
+
+            optionsContainer.innerHTML = question.options.map((option, idx) => `
+                <button class="option-btn ${answers[currentIndex] === idx ? 'selected' : ''}" 
+                        data-index="${idx}"
+                        type="button"
+                        onclick="handleOptionClick(${idx})">
+                    <div class="option-key">${letters[idx]}</div>
+                    <span style="flex: 1; font-weight: 500;">${option}</span>
+                </button>
+            `).join('');
+
+            // Nav buttons
+            const prevBtn = document.getElementById('btn-prev');
+            const nextBtn = document.getElementById('btn-next');
+
+            prevBtn.disabled = currentIndex === 0;
+
+            if (currentIndex === totalQuestions - 1) {
+                nextBtn.innerHTML = 'SUBMIT EXAM <span style="margin-left:8px">✓</span>';
+                nextBtn.classList.remove('btn-primary');
+                nextBtn.classList.add('btn-success');
+            } else {
+                nextBtn.innerHTML = 'NEXT QUESTION <span style="margin-left:8px">→</span>';
+                nextBtn.classList.add('btn-primary');
+                nextBtn.classList.remove('btn-success');
+            }
+
+            saveState();
+        }
+
+        window.handleOptionClick = function (index) {
+            if (isSubmitting) return;
+            answers[currentIndex] = index;
+            renderQuestion();
+        };
+
+        function goNext() {
+            if (isSubmitting) return;
+            if (answers[currentIndex] === null) {
+                // Shake animation or toast could go here
+                alert('Please select an option.');
+                return;
+            }
+
+            if (currentIndex === questions.length - 1) {
+                submitQuiz();
+            } else {
+                currentIndex++;
+                renderQuestion();
+            }
+        }
+
+        function goPrev() {
+            if (isSubmitting) return;
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        async function submitQuiz() {
+            if (!confirm('Are you sure you want to submit your exam?')) return;
+
+            isSubmitting = true;
+            const nextBtn = document.getElementById('btn-next');
+            nextBtn.innerHTML = '<span class="loader-sm"></span> Processing...';
+            nextBtn.disabled = true;
+
+            try {
+                const result = await API.submitQuiz(answers);
+                Utils.clearSession(QUIZ_STATE_KEY);
+                Utils.setSession('eirp_quiz_result', result);
+                window.location.href = '/result.html';
+            } catch (err) {
+                isSubmitting = false;
+                nextBtn.innerHTML = 'SUBMIT EXAM';
+                nextBtn.disabled = false;
+                alert('Submission failed: ' + err.message);
+            }
+        }
+
+        function saveState() {
+            Utils.setSession(QUIZ_STATE_KEY, { currentIndex, answers, timestamp: Date.now() });
+        }
+
+        // Event Listeners
+        document.getElementById('btn-next').addEventListener('click', goNext);
+        document.getElementById('btn-prev').addEventListener('click', goPrev);
+
+        document.addEventListener('keydown', (e) => {
+            if (isSubmitting) return;
+            if (e.key === 'ArrowRight' || e.key === 'Enter') goNext();
+            if (e.key === 'ArrowLeft') goPrev();
+        });
+
+        initQuiz();
+    </script>
+</body>
+
+</html>

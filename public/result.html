@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result | Elite India Roleplay</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .result-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .result-card {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result-icon-large {
+            font-size: 4rem;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            border: 4px solid currentColor;
+            box-shadow: 0 0 30px currentColor;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .score-display {
+            font-size: 5rem;
+            font-weight: 900;
+            font-family: var(--font-head);
+            line-height: 1;
+            margin: 1.5rem 0;
+            text-shadow: 0 0 30px currentColor;
+            animation: scoreReveal 1s ease-out 0.3s forwards;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scoreReveal {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="result-container">
+        <div class="card result-card" id="result-card">
+            <div class="loader" style="width: 50px; height: 50px; border-width: 4px;"></div>
+            <p style="margin-top: 1rem; color: var(--text-muted); letter-spacing: 0.1em;">ANALYZING RESULTS...</p>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        let cooldownInterval = null;
+
+        async function initResult() {
+            const authData = await checkAuth();
+            if (!authData) return;
+
+            // Check session result first
+            const freshResult = Utils.getSession('eirp_quiz_result');
+            if (freshResult) {
+                Utils.clearSession('eirp_quiz_result');
+                renderResult(freshResult);
+                return;
+            }
+
+            // Fetch from API
+            try {
+                const result = await API.getResult();
+                if (!result || !result.hasAttempted) {
+                    window.location.href = '/dashboard.html';
+                    return;
+                }
+                renderResult(result);
+            } catch (err) {
+                renderError();
+            }
+        }
+
+        function renderResult(result) {
+            const card = document.getElementById('result-card');
+            const total = result.total || 10;
+
+            if (result.passed) {
+                card.innerHTML = `
+                    <div class="result-icon-large" style="color: var(--success); border-color: var(--success);">✓</div>
+                    <h1 style="color: var(--success); margin-bottom: 0.5rem;">APPROVED</h1>
+                    <p style="color: var(--text-muted);">Welcome to the Elite.</p>
+                    
+                    <div class="score-display" style="color: var(--success);">${result.score} <span style="font-size: 2rem; color: var(--text-dim);">/ ${total}</span></div>
+                    
+                    <div class="badge badge-success" style="font-size: 1rem; padding: 0.5rem 1.5rem;">PASSED</div>
+
+                    <div style="margin-top: 2rem; width: 100%;">
+                        <a href="/dashboard.html" class="btn btn-primary w-full">CONTINUE TO DASHBOARD</a>
+                    </div>
+                `;
+            } else {
+                const cooldown = result.cooldown || { inCooldown: true, remainingTime: 86400000 };
+
+                card.innerHTML = `
+                    <div class="result-icon-large" style="color: var(--error); border-color: var(--error);">✕</div>
+                    <h1 style="color: var(--error); margin-bottom: 0.5rem;">DENIED</h1>
+                    <p style="color: var(--text-muted);">You did not meet the requirements.</p>
+
+                    <div class="score-display" style="color: var(--error);">${result.score} <span style="font-size: 2rem; color: var(--text-dim);">/ ${total}</span></div>
+                    
+                    <div class="badge badge-error" style="font-size: 1rem; padding: 0.5rem 1.5rem;">FAILED</div>
+
+                    ${cooldown.inCooldown ? `
+                        <div style="margin-top: 2rem; width: 100%; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 4px; border: 1px solid var(--border-glass);">
+                            <p style="font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;">RETRY AVAILABLE IN</p>
+                            <div id="cooldown-timer" style="font-family: var(--font-head); font-size: 2rem; color: var(--warning); font-weight: 700;">
+                                ${Utils.formatTime(cooldown.remainingTime)}
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="margin-top: 2rem;">
+                            <p style="color: var(--success);">Cooldown ended. You can retry now.</p>
+                        </div>
+                    `}
+
+                    <div style="margin-top: 2rem; width: 100%;">
+                        <a href="/dashboard.html" class="btn btn-secondary w-full">RETURN TO DASHBOARD</a>
+                    </div>
+                `;
+
+                if (cooldown.inCooldown) startCooldownTimer(cooldown.remainingTime);
+            }
+        }
+
+        function renderError() {
+            document.getElementById('result-card').innerHTML = `
+                <h2 style="color: var(--error);">ERROR</h2>
+                <p>Failed to load result data.</p>
+                <a href="/dashboard.html" class="btn btn-secondary mt-4">BACK</a>
+            `;
+        }
+
+        function startCooldownTimer(remainingMs) {
+            if (cooldownInterval) clearInterval(cooldownInterval);
+            let remaining = remainingMs;
+            const timerEl = document.getElementById('cooldown-timer');
+
+            cooldownInterval = setInterval(() => {
+                remaining -= 1000;
+                if (remaining <= 0) {
+                    clearInterval(cooldownInterval);
+                    if (timerEl) timerEl.innerHTML = "<span style='color: var(--success)'>READY</span>";
+                    return;
+                }
+                if (timerEl) timerEl.textContent = Utils.formatTime(remaining);
+            }, 1000);
+        }
+
+        initResult();
+    </script>
+</body>
+
+</html>
