@@ -1,0 +1,103 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is the primary rule of roleplay in a FiveM server?",
+      "options": [
+        "Always win every situation",
+        "Stay in character and act realistically",
+        "Use exploits to gain advantages",
+        "Ignore other players"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 2,
+      "question": "What does 'RDM' stand for in roleplay?",
+      "options": [
+        "Random Deathmatch - killing without valid RP reason",
+        "Really Dangerous Mission",
+        "Roleplay Death Mode",
+        "Regular Daily Mission"
+      ],
+      "correctOption": 0
+    },
+    {
+      "id": 3,
+      "question": "What does 'VDM' mean in roleplay?",
+      "options": [
+        "Very Dangerous Mode",
+        "Vehicle Death Match - using vehicles to kill without RP reason",
+        "Virtual Display Mode",
+        "Verified Driver Mode"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 4,
+      "question": "What is 'Metagaming'?",
+      "options": [
+        "Playing multiple games at once",
+        "Using out-of-character information in roleplay",
+        "Playing as a meta human character",
+        "Completing game achievements"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 5,
+      "question": "What does 'NLR' (New Life Rule) mean?",
+      "options": [
+        "You can immediately return to where you died",
+        "After respawning, you forget events that led to your death",
+        "You must create a new character after dying",
+        "You can seek revenge on who killed you"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 6,
+      "question": "What is 'Powergaming'?",
+      "options": [
+        "Playing for long hours",
+        "Using game mechanics unrealistically or forcing actions on others",
+        "Having a powerful character",
+        "Completing missions quickly"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 7,
+      "question": "What should you do if you encounter a bug or glitch?",
+      "options": [
+        "Exploit it for personal gain",
+        "Share it with friends only",
+        "Report it to staff and avoid exploiting it",
+        "Ignore it completely"
+      ],
+      "correctOption": 2
+    },
+    {
+      "id": 8,
+      "question": "What is 'Fear RP'?",
+      "options": [
+        "Scaring other players intentionally",
+        "Acting fearful when your character's life is threatened",
+        "Playing horror roleplay scenarios",
+        "Avoiding dangerous areas"
+      ],
+      "correctOption": 1
+    },
+    {
+      "id": 9,
+      "question": "What does 'FailRP' refer to?",
+      "options": [
+        "Failing a mission",
+        "Actions that break immersion or are unrealistic",
+        "Failing to log in",
+        "Poor driving skills"
+      ],
+      "correctOption": 1
+    }
+  ]
+}

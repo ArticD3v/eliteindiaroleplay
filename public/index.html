@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Elite India Roleplay - Premium FiveM Experience. Join the allowlist today.">
+    <title>Elite India Roleplay | Enter the City</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .landing-logo {
+            width: 300px;
+            height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 50px var(--accent-glow));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 5rem;
+            width: 100%;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            transition: var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar animate-fade-up" style="animation-delay: 0.1s;">
+        <div class="nav-container">
+            <a href="/" class="nav-brand">ELITE <span style="color: var(--accent-primary);">INDIA</span></a>
+            <ul class="nav-links">
+                <li><a href="/" class="nav-link">HOME</a></li>
+                <li><a href="#features" class="nav-link">FEATURES</a></li>
+                <li><a href="#rules" class="nav-link">RULES</a></li>
+                <li><a href="https://discord.gg/eliteindia" target="_blank" class="nav-link">DISCORD</a></li>
+            </ul>
+            <a href="/auth/discord" id="nav-login-btn" class="btn btn-primary btn-sm"
+                style="padding: 8px 20px; font-size: 0.8rem;">LOGIN</a>
+        </div>
+    </nav>
+
+    <div class="full-screen">
+        <main class="container" style="padding-top: 8rem; padding-bottom: 4rem; text-align: center;">
+
+            <!-- Hero Section -->
+            <div
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh;">
+                <!-- Logo -->
+                <div class="animate-fade-up" style="animation-delay: 0.2s;">
+                    <img src="/img/logo.png" alt="Elite India Roleplay" class="landing-logo">
+                </div>
+
+                <!-- Text -->
+                <div class="animate-fade-up" style="animation-delay: 0.4s;">
+                    <h1 style="font-size: 3.5rem; margin-bottom: 0.5rem; letter-spacing: 0.1em; line-height: 1;">
+                        ELITE <span
+                            style="color: var(--accent-vibrant); text-shadow: 0 0 20px var(--accent-cyan-glow);">INDIA</span>
+                    </h1>
+                    <p
+                        style="color: var(--accent-primary); font-family: var(--font-head); letter-spacing: 0.5em; margin-bottom: 2rem; font-weight: 700;">
+                        ROLEPLAY SERVER
+                    </p>
+
+                    <p
+                        style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 3rem; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.8;">
+                        Step into a persistent world where your story defines the city.
+                        High-stakes economy, immersive gangs, and realistic roleplay.
+                    </p>
+
+                    <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="/auth/discord" id="hero-login-btn" class="btn btn-discord btn-lg">
+                            <span style="font-size: 1.2rem; margin-right: 0.5rem;">🎮</span> LOGIN WITH DISCORD
+                        </a>
+                        <a href="#features" class="btn btn-secondary btn-lg">LEARN MORE</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Server Stats -->
+            <div class="server-status-section animate-fade-up" style="animation-delay: 0.6s;">
+                <h2 style="color: var(--text-main); font-size: 2rem; margin-bottom: 1rem;">LIVE STATS</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-number" style="color: var(--accent-vibrant);">126</div>
+                        <p style="color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.5rem;">PLAYERS ONLINE
+                        </p>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-number" style="color: var(--success);">99%</div>
+                        <p style="color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.5rem;">UPTIME</p>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-number" style="color: var(--warning);">24/7</div>
+                        <p style="color: var(--text-muted); letter-spacing: 0.1em; margin-top: 0.5rem;">ACTIVE STAFF</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div id="features" class="animate-fade-up" style="animation-delay: 0.8s; margin-top: 4rem;">
+                <h2 style="font-size: 2.5rem; margin-bottom: 3rem;">SERVER FEATURES</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>ALLOWLIST QUIZ</h3>
+                        <p class="text-muted" style="margin-top: 1rem;">Prove your roleplay knowledge with our automated
+                            10-question entry exam. No waiting days for approval.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>OPTIMIZED CORE</h3>
+                        <p class="text-muted" style="margin-top: 1rem;">Running on a custom framework designed for
+                            performance. High FPS, low latency, seamless sync.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>SERIOUS RP</h3>
+                        <p class="text-muted" style="margin-top: 1rem;">Strict rules and active moderation ensure
+                            quality interactions. No win-mentality or griefing allowed.</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer
+            style="text-align: center; padding: 4rem 2rem; color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.4);">
+            <div style="margin-bottom: 2rem;">
+                <a href="#" style="color: var(--text-muted); margin: 0 1rem; text-decoration: none;">Terms</a>
+                <a href="#" style="color: var(--text-muted); margin: 0 1rem; text-decoration: none;">Privacy</a>
+                <a href="#" style="color: var(--text-muted); margin: 0 1rem; text-decoration: none;">Rules</a>
+            </div>
+            &copy; 2024 Elite India Roleplay. Not affiliated with Rockstar Games.
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/auth/status');
+                const data = await response.json();
+                if (data.authenticated) {
+                    const navBtn = document.getElementById('nav-login-btn');
+                    const heroBtn = document.getElementById('hero-login-btn');
+
+                    if (navBtn) {
+                        navBtn.textContent = 'DASHBOARD';
+                        navBtn.href = '/dashboard.html';
+                    }
+
+                    if (heroBtn) {
+                        heroBtn.innerHTML = '<span style="font-size: 1.2rem; margin-right: 0.5rem;">🚀</span> ENTER DASHBOARD';
+                        heroBtn.href = '/dashboard.html';
+                        heroBtn.classList.remove('btn-discord');
+                        heroBtn.classList.add('btn-primary');
+                    }
+                }
+            } catch (e) {
+                console.error('Auth check failed', e);
+            }
+        });
+    </script>
+</body>
+
+</html>
