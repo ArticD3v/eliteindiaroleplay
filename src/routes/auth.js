@@ -40,36 +40,112 @@ router.get('/discord', async (req, res) => {
     }
 });
 
-// OAuth callback
-router.get('/callback', async (req, res) => {
-    const code = req.query.code;
-    const error = req.query.error;
+// OAuth callback - Serve Client-Side Handler
+router.get('/callback', (req, res) => {
+    // Serve a simple HTML page to parse the hash and POST to server
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Authenticating...</title>
+        <style>
+            body { background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+            .loader { border: 4px solid #333; border-top: 4px solid #a855f7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+            @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            .content { text-align: center; }
+        </style>
+    </head>
+    <body>
+        <div class="content">
+            <div class="loader" style="margin: 0 auto 20px;"></div>
+            <h2>Finishing Login...</h2>
+            <p id="status">Please wait a moment.</p>
+        </div>
+        <script>
+            async function handleAuth() {
+                const hash = window.location.hash;
+                const status = document.getElementById('status');
+                
+                if (!hash) {
+                    // Check if we have error params in search
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('error')) {
+                        status.textContent = 'Error: ' + urlParams.get('error_description') || 'Login failed.';
+                        setTimeout(() => window.location.href = '/', 2000);
+                        return;
+                    }
+                    status.textContent = 'No authentication data found.';
+                    setTimeout(() => window.location.href = '/', 2000);
+                    return;
+                }
 
-    if (error) {
-        console.error('Auth Callback Error:', error, req.query.error_description);
-        return res.redirect('/?error=auth_denied');
-    }
+                // Parse hash params
+                const params = new URLSearchParams(hash.substring(1)); // remove #
+                const accessToken = params.get('access_token');
+                
+                if (!accessToken) {
+                     status.textContent = 'Invalid authentication data.';
+                     setTimeout(() => window.location.href = '/', 2000);
+                     return;
+                }
 
-    if (!code) {
-        return res.redirect('/?error=no_code');
+                try {
+                    const response = await fetch('/auth/session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ access_token: accessToken })
+                    });
+
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        status.textContent = 'Success! Redirecting...';
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        status.textContent = 'Verification failed: ' + (data.error || 'Unknown error');
+                        setTimeout(() => window.location.href = '/', 3000);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    status.textContent = 'Connection error. Please try again.';
+                    setTimeout(() => window.location.href = '/', 3000);
+                }
+            }
+            handleAuth();
+        </script>
+    </body>
+    </html>
+    `;
+    res.send(html);
+});
+
+// Verify Session and Set Cookie
+router.post('/session', async (req, res) => {
+    const { access_token } = req.body;
+
+    if (!access_token) {
+        return res.status(400).json({ error: 'Missing access token' });
     }
 
     try {
-        // Exchange code for session
-        const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        // Verify token with Supabase
+        const { data: { user: sbUser }, error } = await supabase.auth.getUser(access_token);
 
-        if (exchangeError) {
-            console.error('Code Exchange Error:', exchangeError);
-            return res.redirect('/?error=exchange_failed');
+        if (error || !sbUser) {
+            console.error('Token Verification Error:', error);
+            return res.status(401).json({ error: 'Invalid token' });
         }
 
-        const { user: sbUser, session } = data;
-        const discordProfile = sbUser.user_metadata; // Supabase stores Discord info here
+        const discordProfile = sbUser.user_metadata;
 
         // Map to our user structure
-        const discordId = discordProfile.provider_id || sbUser.identities[0].id_in_provider;
+        const discordId = discordProfile.provider_id || (sbUser.identities && sbUser.identities[0]?.id_in_provider) || sbUser.id;
         const username = discordProfile.custom_claims?.global_name || discordProfile.full_name || discordProfile.name;
-        const avatarUrl = discordProfile.avatar_url;
+        // Handle avatar: Supabase metadata avatar_url or construct manually if missing
+        let avatarUrl = discordProfile.avatar_url;
+        if (!avatarUrl && discordId && discordProfile.avatar_url === undefined) {
+            // Fallback if needed, but user_metadata usually has it
+        }
 
         // Save/Update in our public.users table
         let user = await storage.getUser(discordId);
@@ -86,7 +162,6 @@ router.get('/callback', async (req, res) => {
             await storage.saveUser(user);
         } else {
             console.log(`[Auth] Updating existing user ${discordId}`);
-            // Update metadata
             await storage.updateUser(discordId, {
                 username: username,
                 avatar: avatarUrl
@@ -95,16 +170,19 @@ router.get('/callback', async (req, res) => {
             user.avatar = avatarUrl;
         }
 
-        // Establish Express Session manually (mimics Passport)
+        // Establish Express Session
         req.session.user = user;
         req.session.save((err) => {
-            if (err) console.error('Session Save Error:', err);
-            res.redirect('/dashboard.html');
+            if (err) {
+                console.error('Session Save Error:', err);
+                return res.status(500).json({ error: 'Session save failed' });
+            }
+            res.json({ success: true, user });
         });
 
     } catch (err) {
-        console.error('Auth Processing Error:', err);
-        res.redirect('/?error=server_error');
+        console.error('Session Creation Error:', err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
