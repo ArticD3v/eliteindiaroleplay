@@ -6,13 +6,10 @@
 
 const express = require('express');
 const session = require('express-session');
-const passport = require('passport');
+// Passport removed
 const helmet = require('helmet');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
-
-// Import passport configuration
-require('../src/config/passport');
 
 // Import routes
 const authRoutes = require('../src/routes/auth');
@@ -61,9 +58,9 @@ function createApp() {
 
     const { ensureAdminPage } = require('../src/middleware/auth');
 
-    // Passport middleware
-    app.use(passport.initialize());
-    app.use(passport.session());
+    // Passport middleware REMOVED
+    // app.use(passport.initialize());
+    // app.use(passport.session());
 
     // PROTECT ADMIN PANEL DIRECT ACCESS
     app.get('/admin.html', ensureAdminPage);
@@ -79,7 +76,7 @@ function createApp() {
 
     // Root redirect
     app.get('/', (req, res) => {
-        if (req.isAuthenticated()) {
+        if (req.session && req.session.user) {
             res.redirect('/dashboard.html');
         } else {
             res.sendFile(path.join(__dirname, '../public', 'index.html'));

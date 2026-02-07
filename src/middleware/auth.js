@@ -72,46 +72,55 @@ async function checkIsAdmin(discordId) {
  * Middleware to ensure user is authenticated
  */
 const ensureAuth = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    // Check if user is authenticated via session
+    if (req.session && req.session.user) {
+        // Polyfill req.user for backward compatibility with routes
+        req.user = req.session.user;
         return next();
     }
-    res.status(401).json({ error: 'Unauthorized. Please login with Discord.' });
+    res.status(401).json({ error: 'Unauthorized' });
 };
 
 /**
  * Middleware to ensure user is authenticated (for pages)
  */
 const ensureAuthPage = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (req.session && req.session.user) {
+        req.user = req.session.user; // Polyfill
         return next();
     }
     res.redirect('/');
 };
 
 /**
- * Middleware to ensure user is an admin (async - checks Discord role)
+ * Middleware to ensure user is an admin (API - async)
  */
 const ensureAdmin = async (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).json({ error: 'Unauthorized. Please login with Discord.' });
+    if (!req.session || !req.session.user) {
+        return res.status(401).json({ error: 'Unauthorized' });
     }
+
+    req.user = req.session.user; // Polyfill
 
     const isAdmin = await checkIsAdmin(req.user.discordId);
     if (isAdmin) {
         return next();
     }
 
-    res.status(403).json({ error: 'Forbidden. Admin access required.' });
+    res.status(403).json({ error: 'Forbidden: Admin access required' });
 };
 
 /**
  * Middleware to ensure user is an admin (for pages - async)
  */
 const ensureAdminPage = async (req, res, next) => {
-    if (!req.isAuthenticated()) {
+    if (!req.session || !req.session.user) {
         return res.redirect('/');
     }
 
+    req.user = req.session.user; // Polyfill
+
+    // Check if admin
     const isAdmin = await checkIsAdmin(req.user.discordId);
     if (isAdmin) {
         return next();
@@ -123,7 +132,7 @@ const ensureAdminPage = async (req, res, next) => {
 /**
  * Check if a user ID is an admin (sync version - only checks ID list)
  */
-const isAdmin = (discordId) => {
+const checkIsAdminSync = (discordId) => {
     const adminIds = getAdminIds();
     return adminIds.includes(discordId);
 };
@@ -133,6 +142,6 @@ module.exports = {
     ensureAuthPage,
     ensureAdmin,
     ensureAdminPage,
-    isAdmin,
+    isAdmin: checkIsAdminSync,
     checkIsAdmin
 };
