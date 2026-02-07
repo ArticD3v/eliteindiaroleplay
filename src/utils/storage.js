@@ -194,6 +194,44 @@ const getQuestionsForClient = async () => {
     }));
 };
 
+const addQuestion = async (question) => {
+    const dbQuestion = {
+        question: question.question,
+        options: question.options,
+        correct_option: question.correctOption
+    };
+    // Let database handle ID (SERIAL)
+    const { data, error } = await supabase.from('questions').insert(dbQuestion).select().single();
+    if (error) return null;
+    return {
+        id: data.id,
+        question: data.question,
+        options: data.options,
+        correctOption: data.correct_option
+    };
+};
+
+const updateQuestion = async (id, updates) => {
+    const payload = {};
+    if (updates.question) payload.question = updates.question;
+    if (updates.options) payload.options = updates.options;
+    if (updates.correctOption !== undefined) payload.correct_option = updates.correctOption;
+
+    const { data, error } = await supabase.from('questions').update(payload).eq('id', id).select().single();
+    if (error) return null;
+    return {
+        id: data.id,
+        question: data.question,
+        options: data.options,
+        correctOption: data.correct_option
+    };
+};
+
+const deleteQuestion = async (id) => {
+    const { error } = await supabase.from('questions').delete().eq('id', id);
+    return !error;
+};
+
 const validateQuiz = async (answers) => {
     const questions = await getQuestions();
 
