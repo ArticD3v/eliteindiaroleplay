@@ -26,6 +26,9 @@ const applyRoutes = require('../src/routes/apply');
 function createApp() {
     const app = express();
 
+    // Trust proxy (Render/Vercel/Heroku)
+    app.set('trust proxy', 1);
+
     // Security middleware
     app.use(helmet({
         contentSecurityPolicy: {
