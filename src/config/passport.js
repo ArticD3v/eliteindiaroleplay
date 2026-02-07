@@ -43,6 +43,7 @@ passport.use(new DiscordStrategy({
 
         if (!user) {
             // New user
+            console.log(`[Passport] Creating new user for ${profile.id}`);
             user = {
                 discordId: profile.id,
                 username: profile.username,
@@ -50,9 +51,11 @@ passport.use(new DiscordStrategy({
                 status: 'new',
                 lastAttempt: null
             };
-            await storage.saveUser(user); // Insert
+            const saved = await storage.saveUser(user); // Insert
+            if (!saved) console.error('[Passport] Failed to save new user');
         } else {
             // Existing user - update profile info
+            console.log(`[Passport] Updating existing user ${profile.id}`);
             await storage.updateUser(profile.id, {
                 username: profile.username,
                 avatar: avatarUrl
@@ -64,6 +67,7 @@ passport.use(new DiscordStrategy({
 
         return done(null, user);
     } catch (err) {
+        console.error('[Passport] Strategy Error:', err);
         return done(err, null);
     }
 }));

@@ -83,10 +83,14 @@ function createApp() {
         }
     });
 
-    // Error handling middleware
+    // Global error handler
     app.use((err, req, res, next) => {
-        console.error('[Website Error]:', err.message);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('[Website Error]:', err);
+        res.status(500).json({
+            error: 'Internal server error',
+            message: err.message,
+            stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+        });
     });
 
     // 404 handler
