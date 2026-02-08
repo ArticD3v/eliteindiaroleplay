@@ -65,8 +65,19 @@ function createApp() {
     // PROTECT ADMIN PANEL DIRECT ACCESS
     app.get('/admin.html', ensureAdminPage);
 
-    // Static files
-    app.use(express.static(path.join(__dirname, '../public')));
+    const staticPath = path.join(__dirname, '../public');
+    console.log('[Website] Serving static files from:', staticPath);
+    app.use(express.static(staticPath));
+
+    // Debug route to check paths
+    app.get('/debug-path', (req, res) => {
+        res.json({
+            __dirname,
+            cwd: process.cwd(),
+            staticPath,
+            exists: require('fs').existsSync(staticPath)
+        });
+    });
 
     // Routes
     app.use('/auth', authRoutes);
@@ -118,4 +129,4 @@ function startWebsite(port) {
     });
 }
 
-module.exports = { startWebsite, createApp };
+module.exports = createApp();

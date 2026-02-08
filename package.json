@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "web": "node website/start.js",
+    "bot": "node bot/start.js"
   },
   "keywords": [
     "fivem",
